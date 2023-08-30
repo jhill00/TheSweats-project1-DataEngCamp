@@ -2,15 +2,37 @@ import requests
 
 class News:
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key:str, which_news:str = 'news', language:str = 'en', timeframe:int = 2, prioritydomain:str = 'top', 
+        size:int = 10, q:str=None, qInTitle:str=None, qInMeta:str=None, country:[str]=None, category:[str]=None, domain:[str]=None, 
+        domainurl:[str]=None, excludedomain:[str]=None, timezone:str=None, full_content:bool=None, image:bool=None, video:bool=None):
+
         self.base_url = 'https://newsdata.io/api/1/'
         self.api_key = api_key
+        self.which_news = which_news
+        self.language = language
+        self.timeframe = timeframe
+        self.prioritydomain = prioritydomain
+        self.size = size
+        self.q = q
+        self.qInTitle = qInTitle
+        self.qInMeta = qInMeta
+        self.country = country
+        self.category = category
+        self.domain = domain
+        self.domainurl = domainurl
+        self.excludedomain = excludedomain
+        self.timezone = timezone
+        self.full_content = full_content
+        self.image = image
+        self.video = video
+
         if api_key is None:
             raise Exception('Please enter a valid API key. A valid key cannot be None.')
         
     def _build_params(self, param:str, value) -> dict:
 
-        str_params = {'q','qInTitle','qInMeta','country','category','language','domain','domainurl','excludedomain', 'prioritydomain','timezone'}
+        str_params = {'q','qInTitle','qInMeta','country','category','language','domain','domainurl','excludedomain',
+                      'prioritydomain','timezone','page'}
         bool_params = {'full_content','image','video'}
         int_params = {'timeframe','size'}
 
@@ -29,11 +51,7 @@ class News:
 
         return {param:value}
     
-    def get_news(
-            self, which_news = 'news', q:str=None, qInTitle:str=None, qInMeta:str=None, timeframe:int=None, country:[str]=None, category:[str]=None, 
-            language:[str]='en', domain:[str]=None, domainurl:[str]=None, excludedomain:[str]=None, prioritydomain:str=None, 
-            timezone:str=None, full_content:bool=None, image:bool=None, video:bool=None, size:int=10
-        )->dict:
+    def get_news(self, page:str = None)->dict:
 
         """
         Get news data from NewsData.io API. Please visit https://newsdata.io/documentation/#about-newdata-api for more information on the
@@ -53,15 +71,16 @@ class News:
 
         """
         
-        if which_news not in {'news','crypto','archive'}:
+        if self.which_news not in {'news','crypto','archive'}:
             raise Exception("Please choose a valid API endpoint. Options: 'latest','crypto','archive'")
 
-        base_url = self.base_url + which_news
+        base_url = self.base_url + self.which_news
 
         url_params = {
-            'q':q, 'qInTitle':qInTitle, 'qInMeta':qInMeta, 'timeframe':timeframe, 'country':country, 
-            'category':category, 'language':language, 'domain':domain, 'domainurl':domainurl, 'excludedomain':excludedomain, 
-            'prioritydomain':prioritydomain, 'timezone':timezone, 'full_content':full_content, 'image':image, 'video':video, 'size':size
+            'q':self.q, 'qInTitle':self.qInTitle, 'qInMeta':self.qInMeta, 'timeframe':self.timeframe, 'country':self.country, 
+            'category':self.category, 'language':self.language, 'domain':self.domain, 'domainurl':self.domainurl, 
+            'excludedomain':self.excludedomain, 'prioritydomain':self.prioritydomain, 'timezone':self.timezone, 
+            'full_content':self.full_content, 'image':self.image, 'video':self.video, 'size':self.size, 'page':page
         }
 
         params = {}
@@ -77,8 +96,17 @@ class News:
         else:
             raise Exception(f"Request to {base_url} failed. Status code: {response.status_code} Response: {response.text}")
         
-    def transform_news():
-        pass
+    def next_page_news(self, response):
 
-    def load_news():
-        pass
+        """
+        NewsData.io API responses are received in chunks/pages. We need to input the "page" parameter of a GET request
+        to receive more chunks of the full response. This is useful to get more information, but also to reduce duplication
+        from further requests.
+
+        Args:
+            response: json response of a GET request
+
+        Returns:
+            The "next page" of a given API response
+        """
+        return self.get_news(page = str(response['nextPage']))
