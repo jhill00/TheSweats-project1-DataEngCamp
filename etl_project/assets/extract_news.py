@@ -2,9 +2,10 @@ import requests
 
 class News:
 
-    def __init__(self, api_key:str, which_news:str = 'news', language:str = 'en', timeframe:int = 2, prioritydomain:str = 'top', 
-        size:int = 10, q:str=None, qInTitle:str=None, qInMeta:str=None, country:str=None, category:str=None, domain:str=None, 
-        domainurl:str=None, excludedomain:str=None, timezone:str=None, full_content:bool=None, image:bool=None, video:bool=None):
+    def __init__(self, api_key:str, which_news:str = 'news', language:str = 'en', timeframe:int = 24, size:int = 10, 
+        country:str='us', domainurl:str=['ibtimes.com','latimes.com','investorplace.com','popsci.com','thehill.com'],
+        prioritydomain:str=None, q:str=None, qInTitle:str=None, qInMeta:str=None, category:str=None, domain:str=None,
+         excludedomain:str=None, timezone:str=None, full_content:bool=None, image:bool=None, video:bool=None):
 
         self.base_url = 'https://newsdata.io/api/1/'
         self.api_key = api_key
@@ -51,7 +52,7 @@ class News:
 
         return {param:value}
     
-    def get_news(self, page:str = None)->dict:
+    def get_news(self, page:str = None) -> dict:
 
         """
         Get news data from NewsData.io API. Please visit https://newsdata.io/documentation/#about-newdata-api for more information on the
@@ -86,7 +87,7 @@ class News:
         params = {}
         for key, value in url_params.items():
             if value is not None:
-                url_params.update(self._build_params(param = key, value = value))
+                params.update(self._build_params(param = key, value = value))
 
         headers = {'X-ACCESS-KEY': self.api_key}
         
@@ -96,7 +97,7 @@ class News:
         else:
             raise Exception(f"Request to {base_url} failed. Status code: {response.status_code} Response: {response.text}")
         
-    def next_page_news(self, response):
+    def next_page_news(self, response) -> dict:
 
         """
         NewsData.io API responses are received in chunks/pages. We need to input the "page" parameter of a GET request

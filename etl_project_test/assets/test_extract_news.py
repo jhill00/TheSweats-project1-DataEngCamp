@@ -15,3 +15,26 @@ def test_News_client_extract_payload(setup):
     
     assert len(result) > 0
     assert type(result) == dict
+
+def test_build_params(setup):
+    # Assemble
+    news = News(api_key = os.environ.get('API_KEY'))
+
+    # Act
+    result = news._build_params(param = 'hello', value = 'world')
+
+    # Assert
+    assert type(result) == dict
+    assert len(result) > 0
+
+def test_next_page_news(setup):
+    # Assemble
+    news = News(api_key = os.environ.get('API_KEY'))
+    response = news.get_news()
+
+    # Act
+    next_response = news.next_page_news(response = response)
+
+    # Assert
+    assert type(next_response) == dict
+    assert len(next_response) > 0
