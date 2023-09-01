@@ -175,17 +175,11 @@ def download_from_s3(
 
 
 def calculate_word_frequency(article_contents, word):
+    """Calculates number of times a word appears in the article"""
     return article_contents.lower().count(str(word).lower())
 
-def determine_relative_grade_level(avg_grade_level):
-    if avg_grade_level <= 5:
-        return 'Elementary'
-    elif avg_grade_level <= 8:
-        return 'Middle School'
-    else:
-        return 'High School'
-
 def process_articles(word_by_grade_level_data, newspaper_articles_data):
+    """Processs article and returns a data frame that has article title and word frequency"""
     word_by_grade_level_df = pd.DataFrame(word_by_grade_level_data)
     newspaper_articles_df = pd.DataFrame(newspaper_articles_data)
 
@@ -200,8 +194,7 @@ def process_articles(word_by_grade_level_data, newspaper_articles_data):
             grade_level = word_row['Grade_Lv']
 
             frequency = calculate_word_frequency(article, word)
-            relative_grade_level = grade_level
-
+            
             results.append({
                 'title': title,
                 'word': word,
@@ -211,44 +204,12 @@ def process_articles(word_by_grade_level_data, newspaper_articles_data):
 
     results_df = pd.DataFrame(results)
     return results_df
-# Read data from CSV files
-word_by_grade_level_data = pd.read_csv('/Users/boxbag/TheSweats-project1-DataEngCamp/etl_project/data/vocabulary_by_gradelv.csv')
-raw_newspaper_data = {'status': 'success',
- 'totalResults': 185,
- 'results': [{'article_id': '0de7b03067bf6d2bf64b024ed5aa9c83',
-   'title': 'Pentagon releases new website on UFOs',
-   'link': 'https://thehill.com/policy/defense/4181503-pentagon-releases-new-website-ufos/',
-   'keywords': ['Defense', 'David Grusch', 'UAPs', 'UFOs', 'website'],
-   'creator': ['Brad Dress'],
-   'video_url': None,
-   'description': 'The Defense Department on Thursday released a new website that will provide official declassified information on UFOs, including pictures and videos, for the public to easily parse through. The website is the official page for the public to interact with All-domain Anomaly Resolution Office (AARO), a relatively new Pentagon office tasked with reviewing and analyzing...',
-   'content': 'The Defense Department on Thursday released a new website that will provide official declassified information on UFOs, including pictures and videos, for the public to easily parse through. The website is the official page for the public to interact with the All-domain Anomaly Resolution Office (AARO), a relatively new Pentagon office tasked with reviewing and analyzing UFOs. The site appears to still be under construction, but it . The Hill has reached out to the Defense Department for more information about when the full website will go live. The U.S. government, which now refers to UFOs by the name of Unidentified Aerial Phenomena (UAPs), has taken the presence of unknown flying objects more seriously in the past few years, as has Congress. In a Thursday release about the website, the Pentagon said it was “committed to transparency with the American people on AARO’s work” on UAPs. “This website will serve as a one-stop shop for all publicly available information related to AARO and UAP,” the release reads, “and AARO will regularly update the website with its most recent activities and findings as new information is cleared for public release.” The AARO website will allow the public to review photos and videos of UAPs as they are declassified and will publish reports, press releases and a “frequently asked questions” section about the phenomena. Users can also find available aircraft, balloon and satellite tracking sites on the page. In the fall, AARO intends to create a contact form for former U.S. government employees or others with knowledge of federal government programs to easily submit a report if they have relevant information related to UAPs. Since its inception in 2022, AARO has investigated about 800 UAPs. Some of the phenomena have innocuous explanations, but many others remain mysterious and unexplained. UAP interest grew this year after former intelligence official David Grusch claimed the evidence related to extraterrestrial craft and lifeforms. Grusch was unable to provide evidence at a House hearing this summer.',
-   'pubDate': '2023-08-31 21:46:32',
-   'image_url': 'https://thehill.com/wp-content/uploads/sites/2/2023/07/Quiz-UFO_052721_AP_Michael-Sohn.jpg?w=900',
-   'source_id': 'thehill',
-   'source_priority': 393,
-   'country': ['united states of america'],
-   'category': ['politics'],
-   'language': 'english'},
-  {'article_id': '4c58c55da39c31d52e6d1abb5818d29d',
-   'title': "China says it 'deplores' US military transfer to Taiwan",
-   'link': 'https://thehill.com/policy/defense/4182023-china-says-it-deplores-us-military-transfer-to-taiwan/',
-   'keywords': ['Defense', 'International'],
-   'creator': ['Ellen Mitchell'],
-   'video_url': None,
-   'description': 'China is lashing out at the Biden administration’s approval of the first-ever U.S. military transfer to Taiwan using a program usually saved for sovereign nations. Beijing, which views Taipei as its own territory and has repeatedly threatened to bring it under its control using force, on Thursday claimed the U.S. transfer “severely violates the one-China principle.” “This...',
-   'content': 'China is lashing out at the Biden administration’s approval of the first-ever U.S. military transfer to Taiwan using a program usually saved for sovereign nations. Beijing, which views Taipei as its own territory and has repeatedly threatened to bring it under its control using force, on Thursday claimed the U.S. transfer “severely violates the one-China principle.” “This severely violates the one-China principle and the stipulations of the three China-U.S. joint communiques,” China’s Foreign Ministry spokesman Wang Wenbin said at a news conference in Beijing. “China deplores and firmly opposes it.” The State Department on Tuesday notified Congress it would sell Taiwan an as part of the department’s foreign military financing (FMF) program, which uses U.S. taxpayer dollars to fund the supply of materials to foreign countries. The package is meant to “strengthen Taiwan’s self-defense capabilities,” according to the agency. This marks the first time the U.S. has provided military assistance under FMF to Taiwan and the second time it’s given it to a non-nation-state, the first being to the African Union. Washington has previously sold Taiwan weapons under its Foreign Military Sale program, which doesn’t imply statehood, though U.S. officials said this new method of weapons transfer does not mean a change in policy. But China, which in the past has strongly protested any and all U.S. defense aid to the independently governed island, on Thursday urged Washington to “stop creating tensions across the Taiwan Strait” by “enhancing U.S.-Taiwan military connections and arming Taiwan,” according to Wenbin. It’s unknown what exact weapons and equipment will be in the military package, but it could include air and coastal defense systems, armed vehicles, ballistic missile and cyber defenses, ammunition or even training support for Taiwanese military forces. Lawmakers applauded the package, including Senate Foreign Relations Committee Chairman Bob Menendez (D-N.J.), who called the move a “meaningful contribution” on the part of the administration. “In the face of increasingly aggressive People’s Republic of China military actions in the [Taiwan Strait], the United States must move quickly to provide support for Taiwan’s defense,” Menendez said in a statement. And Rep. Michael McCaul (R-Texas), the chair of the House Foreign Affairs Committee, said the weapons to Taiwan will help the island “protect other democracies in the region” and “strengthen the U.S. deterrence posture and ensure our national security from an increasingly aggressive [Chinese Communist Party].”',
-   'pubDate': '2023-08-31 21:36:26',
-   'image_url': 'https://thehill.com/wp-content/uploads/sites/2/2023/07/AP23207120236485-e1690582692588.jpg?w=900',
-   'source_id': 'thehill',
-   'source_priority': 393,
-   'country': ['united states of america'],
-   'category': ['politics'],
-   'language': 'english'}
- ]
-}
 
-
-newspaper_articles_data = rename_and_select_columns_news(json_news_to_df(raw_newspaper_data))
-processed_article = process_articles(word_by_grade_level_data=word_by_grade_level_data, newspaper_articles_data=newspaper_articles_data)
-processed_article.to_csv('processed_article', index=False)
+def determine_relative_grade_level(avg_grade_level):
+    """just wrote this out in case we want to use somehting like this"""
+    if avg_grade_level <= 5:
+        return 'Elementary'
+    elif avg_grade_level <= 8:
+        return 'Middle School'
+    else:
+        return 'High School'
