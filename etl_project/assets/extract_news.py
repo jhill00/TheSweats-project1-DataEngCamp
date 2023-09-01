@@ -123,8 +123,7 @@ def json_news_to_df(
         data: json,
     ) -> pd.DataFrame:
     """ Converts api request object from JSON to a dataframe"""
-    json_response = data
-    results = json_response['results']
+    results = data['results']
     df = pd.json_normalize(results)
     return df
 
