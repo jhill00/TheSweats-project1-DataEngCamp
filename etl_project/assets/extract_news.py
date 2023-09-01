@@ -1,4 +1,10 @@
 import requests
+import pandas as pd
+from pathlib import Path
+import boto3
+from io import StringIO
+import json
+# need to add boto3 to requirements later
 
 class News:
 
@@ -111,3 +117,60 @@ class News:
             The "next page" of a given API response
         """
         return self.get_news(page = str(response['nextPage']))
+
+
+def json_news_to_df(
+        data: json,
+    ) -> pd.DataFrame:
+    """ Converts api request object from JSON to a dataframe"""
+    json_response = data
+    results = json_response['results']
+    df = pd.json_normalize(results)
+    return df
+
+def rename_and_select_columns_news( 
+        df:pd.DataFrame
+    )->pd.DataFrame:
+    """Performs transformation on dataframe produced from extract() function. Returns dataframe to be loaded """
+    # renaming some columns from json response
+    df_news_renamed = df.rename(columns={
+        "status": "status",
+        "totalResults": "totalResults",
+        "title": "title",
+        "link": "article_link",
+        "source_id": "publisher",
+        "source_priority": "publisher_priority",
+        "keywords": "keywords",
+        "creator": "author", 
+        "pubDate": "publish_date",
+        "image_url": "image_url",
+        "video_url": "video_url",
+        "description": "description", 
+        "content": "article_contents", 
+        "category": "category",     
+        "country": "country",
+        "language": "language" 
+    })
+    df_news_selected = df_news_renamed[['title', 'article_link', 'keywords', 'author', 'keywords', 'publish_date', 'article_contents', 'category', 'country', 'language']]
+    # keep only 'title', 'article_link', 'keywords', 'author', 'keywords', 'publish_date', 'article', 'category', 'country', 'language'
+    return df_news_selected
+
+def download_from_s3(
+        ACCESS_KEY: str,
+        SECRET_KEY: str,
+        s3_bucket: str,
+        key: str
+    ) -> pd.DataFrame:
+    """Downloads a csv from S3 bucket"""
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=ACCESS_KEY,
+        aws_secret_access_key=SECRET_KEY,
+        region_name='us-east-1'
+    )
+    s3_object = s3.get_object(Bucket=s3_bucket, Key=key)
+    s3_data = s3_object['Body'].read().decode('utf-8')
+    df = pd.read_csv(StringIO(s3_data))
+    return df
+
+
