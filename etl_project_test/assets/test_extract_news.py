@@ -1,4 +1,5 @@
 from etl_project.assets.extract_news import News
+import pandas as pd
 import pytest
 from dotenv import load_dotenv
 import os
@@ -38,3 +39,14 @@ def test_next_page_news(setup):
     # Assert
     assert type(next_response) == dict
     assert len(next_response) > 0
+
+def test_json_news_to_df(setup):
+    api_key = os.environ.get("API_KEY")
+    News_client = News(api_key=api_key, which_news = 'news', language = 'en', timeframe = 2, prioritydomain= 'top', 
+        size = 10,)
+    result = News_client.get_news()
+
+    """ Converts api request object from JSON to a dataframe"""
+    results = result['results']
+    df = pd.json_normalize(results)
+    assert type(df) == pd.DataFrame
