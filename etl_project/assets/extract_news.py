@@ -4,6 +4,9 @@ from pathlib import Path
 import boto3
 from io import StringIO
 import json
+from sqlalchemy import Table, MetaData
+from etl_project.connectors.postgresql import PostgreSqlClient
+
 # need to add boto3 to requirements later
 
 class News:
@@ -172,5 +175,34 @@ def download_from_s3(
     s3_data = s3_object['Body'].read().decode('utf-8')
     df = pd.read_csv(StringIO(s3_data))
     return df
+
+# need to take two df takes and merge them into one df
+def load(df: pd.DataFrame, postgresql_client, table: Table, metadata: MetaData, load_method: str = "overwrite") -> None:
+    """Loads a dataframe into a postgresql table
+    
+    Args:
+        df: dataframe to be loaded
+        postgresql_client: a postgresql client
+        table: a table object
+        metadata: a metadata object
+    """
+    
+    if load_method == "overwrite":
+        postgresql_client.overwrite(data=df.to_dict(orient="records"), table=table, metadata=metadata)
+    elif load_method == "upsert":
+        postgresql_client.upsert(data=df.to_dict(orient="records"), table=table, metadata=metadata)
+    elif load_method == "insert":
+        postgresql_client.insert(data=df.to_dict(orient="records"), table=table, metadata=metadata)
+    else:
+        raise Exception("Please choose a valid load method. Options: 'overwrite','upsert','insert'")
+
+
+def load_multiple(dfs:
+                  list[pd.DataFrame], postgresql_client, table: Table, metadata: MetaData, load_method: str = "overwrite") -> None:
+    """Loads a list of dataframes into a postgresql table
+    """
+    for df in dfs:
+        load(df=df, postgresql_client=postgresql_client, table=table, metadata=metadata, load_method=load_method)                              
+        
 
 
