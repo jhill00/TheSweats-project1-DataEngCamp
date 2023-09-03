@@ -1,5 +1,5 @@
 from etl_project.assets.extract_news import News
-from etl_project.assets.extract_news import loaded
+from etl_project.assets.extract_news import *
 import pytest
 from dotenv import load_dotenv
 import os
@@ -42,29 +42,31 @@ def test_next_page_news(setup):
 
 
 
-def test_loaded():
-    # Mock the data and external dependencies
-    mock_response = [
-        {
-            "title": "Test Title 1",
-            "article_link": "https://example.com/article1",
-            
-        },
-        {
-            "title": "Test Title 2",
-            "article_link": "https://example.com/article2",
-         
-        },
-    ]
+def test_loaded_exception(setup):
+    # Assemble
+    news = News(api_key = os.environ.get('API_KEY'))
+    response = news.get_news()
+    postgresql_client = None
+    table = None
+    metadata = None
 
+    # Act
+    with pytest.raises(Exception):
+        loaded(df = response, postgresql_client = postgresql_client, table = table, metadata = metadata)
+    
 
-    # Call the function
-    result = loaded(df=mock_response, postgresql_client=None, table=None, metadata=None, load_method="overwrite")
+def load_multiple_exception(setup):
+    # Assemble pass multiple dataframes
 
-    # Assert that the result is as expected
-    assert result is True
+    news = News(api_key = os.environ.get('API_KEY'))
+    response = news.get_news()
+    postgresql_client = None
+    table = None
+    metadata = None
 
-
-
-
+    # Act
+    with pytest.raises(Exception):
+        load_multiple(df = response, postgresql_client = postgresql_client, table = table, metadata = metadata)
+    
+    
 
