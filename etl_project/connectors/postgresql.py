@@ -1,19 +1,16 @@
-from typing import Any
 from sqlalchemy import create_engine, Table, MetaData
-from sqlalchemy.engine import URL
+from sqlalchemy.engine import URL, CursorResult
 from sqlalchemy.dialects import postgresql
+
+
+
 
 class PostgreSqlClient:
     """
-    A client for querying postgresql database. 
+    A client for querying a PostgreSQL database.
     """
-    def __init__(self, 
-        server_name: str, 
-        database_name: str, 
-        username: str, 
-        password: str, 
-        port: int = 5432
-    ):
+
+    def __init__(self, server_name: str, database_name: str, username: str, password: str, port: int = 5432):
         """
         Initialize the client with the database connection parameters.
         """
@@ -34,28 +31,24 @@ class PostgreSqlClient:
 
         self.engine = create_engine(connect_url)
 
-    def select_all(self, table: Table) -> list[dict[str, Any]]:
-        return [dict(row) for row in self.engine.execute(table.select()).all()]
-    
-    
-    def select_all(self, table: Table)-> list[dict]:
+    def select_all(self, table: Table) -> list[dict[str]]:
         return [dict(row) for row in self.engine.execute(table.select()).all()]
 
     def create_table(self, metadata: MetaData) -> None:
         """
-        Creates table provided in the metadata object
+        Creates a table provided in the metadata object.
         """
         metadata.create_all(self.engine)
-    
-    def drop_table(self, table_name: str) -> None: 
-        self.engine.execute(f"drop table if exists {table_name};")
-    
+
+    def drop_table(self, table_name: str) -> None:
+        self.engine.execute(f"DROP TABLE IF EXISTS {table_name};")
+
     def insert(self, data: list[dict], table: Table, metadata: MetaData) -> None:
         metadata.create_all(self.engine)
         insert_statement = postgresql.insert(table).values(data)
         self.engine.execute(insert_statement)
-    
-    def overwrite(self, data: list[dict], table: Table, metadata: MetaData) -> None: 
+
+    def overwrite(self, data: list[dict], table: Table, metadata: MetaData) -> None:
         self.drop_table(table.name)
         self.insert(data=data, table=table, metadata=metadata)
 
