@@ -123,8 +123,7 @@ def json_news_to_df(
         data: json,
     ) -> pd.DataFrame:
     """ Converts api request object from JSON to a dataframe"""
-    json_response = data
-    results = json_response['results']
+    results = data['results']
     df = pd.json_normalize(results)
     return df
 
@@ -174,3 +173,44 @@ def download_from_s3(
     return df
 
 
+
+def calculate_word_frequency(article_contents, word):
+    """Calculates number of times a word appears in the article"""
+    return article_contents.lower().count(str(word).lower())
+
+def process_articles(
+        word_by_grade_level_df: pd.DataFrame, 
+        newspaper_articles_df: pd.DataFrame
+    ) -> pd.DataFrame:
+    """Processs article and returns a data frame that has article title and word frequency"""
+
+    results = []
+
+    for index, row in newspaper_articles_df.iterrows():
+        article = row['article_contents']
+        title = row['title']
+
+        for _, word_row in word_by_grade_level_df.iterrows():
+            word = word_row['Word']
+            grade_level = word_row['Grade_Lv']
+
+            frequency = calculate_word_frequency(article, word)
+            
+            results.append({
+                'title': title,
+                'word': word,
+                'frequency': frequency,
+                'grade_level': grade_level
+            })
+
+    results_df = pd.DataFrame(results)
+    return results_df
+
+def determine_relative_grade_level(avg_grade_level):
+    """just wrote this out in case we want to use somehting like this"""
+    if avg_grade_level <= 5:
+        return 'Elementary'
+    elif avg_grade_level <= 8:
+        return 'Middle School'
+    else:
+        return 'High School'
