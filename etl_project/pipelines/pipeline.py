@@ -41,8 +41,9 @@ if __name__ == "__main__":
     Column('country', String),
     Column('language', String)
 )
+    
   
-
+    
     loaded(df=trans_data, postgresql_client=postgresql_client, table=table, metadata=metadata, load_method="overwrite")
    
 
