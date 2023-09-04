@@ -45,6 +45,36 @@ def test_next_page_news(setup):
     assert type(next_response) == dict
     assert len(next_response) > 0
 
+
+
+def test_loaded_exception(setup):
+    # Assemble
+    news = News(api_key = os.environ.get('API_KEY'))
+    response = news.get_news()
+    postgresql_client = None
+    table = None
+    metadata = None
+
+    # Act
+    with pytest.raises(Exception):
+        loaded(df = response, postgresql_client = postgresql_client, table = table, metadata = metadata)
+    
+
+def load_multiple_exception(setup):
+    # Assemble pass multiple dataframes
+
+    news = News(api_key = os.environ.get('API_KEY'))
+    response = news.get_news()
+    postgresql_client = None
+    table = None
+    metadata = None
+
+    # Act
+    with pytest.raises(Exception):
+        load_multiple(df = response, postgresql_client = postgresql_client, table = table, metadata = metadata)
+    
+    
+
 def test_json_news_to_df(setup):
     api_key = os.environ.get("API_KEY")
     News_client = News(api_key=api_key, which_news = 'news', language = 'en', timeframe = 2, prioritydomain= 'top', 
