@@ -53,9 +53,11 @@ def test_postgresql_client(setup_postgresql_client, setup_table):
     postgresql_client.create_table(metadata)
 
     # Insert data
+    #  {"id": 1, "value": "hello"},
+    #     {"id": 2, "value": "world"}
     data = [
-        {
-            "title": "McCarthy travels to Maui after deadly wildfires: 'Sheer devastation", 
+        {    "id":1,
+            "title": "McCarthy travels to Maui after deadly wildfires: 'Sheer devastation",
             "article_link": "https://thehill.com/homenews/house/4184849-mccarthy-travels-to-maui-after-deadly-wildfires/",
             "keywords": "House,News",
             "author": "author",
@@ -66,6 +68,7 @@ def test_postgresql_client(setup_postgresql_client, setup_table):
             "language": "english"
         }
     ]
+
 
     # Insert data into the table
     postgresql_client.insert(data=data, table=table, metadata=metadata)
@@ -86,7 +89,7 @@ def test_postgresqlclient_upsert(setup_postgresql_client, setup_table):
 
     # Insert data
     data = [
-        {
+        {   "id":1,
             "title": "McCarthy travels to Maui after deadly wildfires: 'Sheer devastation",
             "article_link": "https://thehill.com/homenews/house/4184849-mccarthy-travels-to-maui-after-deadly-wildfires/",
             "keywords": "House,News",
