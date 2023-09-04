@@ -178,10 +178,11 @@ def calculate_word_frequency(article_contents, word):
     """Calculates number of times a word appears in the article"""
     return article_contents.lower().count(str(word).lower())
 
-def process_articles(word_by_grade_level_data, newspaper_articles_data):
+def process_articles(
+        word_by_grade_level_df: pd.DataFrame, 
+        newspaper_articles_df: pd.DataFrame
+    ) -> pd.DataFrame:
     """Processs article and returns a data frame that has article title and word frequency"""
-    word_by_grade_level_df = pd.DataFrame(word_by_grade_level_data)
-    newspaper_articles_df = pd.DataFrame(newspaper_articles_data)
 
     results = []
 
