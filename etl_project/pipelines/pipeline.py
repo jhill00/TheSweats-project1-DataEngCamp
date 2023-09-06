@@ -1,16 +1,15 @@
 from dotenv import load_dotenv
 import os
-from etl_project.connectors.postgresql import PostgreSqlClient
-from etl_project.assets.extract_news import *
+from etl_project.connectors.postgresql import PostgreSqlServer, PostgreSqlClient, loaded
+from etl_project.assets.extract_news import News, json_news_to_df, rename_and_select_columns_news, rename_and_select_columns_trends
 from sqlalchemy import *
 import datetime
 from loguru import logger
 
 if __name__ == "__main__":
-
     load_dotenv()
 
-    # Connection parameters for the logging database
+    # Load environment variables for logging database
     LOGGING_SERVER_NAME = os.environ.get("LOGGING_SERVER")
     LOGGING_DATABASE_NAME = os.environ.get("LOGGING_DATABASE")
     LOGGING_USERNAME = os.environ.get("LOGGING_USERNAME")
@@ -18,17 +17,15 @@ if __name__ == "__main__":
     LOGGING_PORT = os.environ.get("LOGGING_PORT")
 
     
+
+    # log files will be saved
     log_directory = "etl_project/logs"  # Replace with your desired directory
 
-    # Create a timestamp to include in the log file name
+    # log file name
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
     
-
-
-    # pipeline-related logging
-    logger.add(os.path.join(log_directory, f"pipeline_{timestamp}.log"), rotation="500 MB", mode="a")
-
+    logger.add(os.path.join(log_directory, f"database_{timestamp}.log"), rotation="500 MB", mode="a")
 
     try:
         logger.info("Loading for news table")
@@ -54,7 +51,7 @@ if __name__ == "__main__":
                                              username=DB_USERNAME,
                                              password=DB_PASSWORD,
                                              port=PORT)
-        
+
 
         metadata = MetaData()
 
@@ -80,8 +77,6 @@ if __name__ == "__main__":
                metadata=metadata,
                load_method="overwrite")
         logger.info("Data loaded to PostgreSQL database")
-
-        
         logger.success("Pipeline completed successfully")
 
     except Exception as e:
