@@ -244,23 +244,16 @@ def process_articles(
             word = word_row['Word']
             grade_level = word_row['Grade_Lv']
 
-            frequency = calculate_word_frequency(article, word)
+            frequency = int(calculate_word_frequency(article, word))
             
+            # Append data with correct data types
             results.append({
                 'title': title,
-                'word': word,
+                'word': str(word),  # Convert word to string
                 'frequency': frequency,
-                'grade_level': grade_level
+                'grade_level': float(grade_level),  # Convert grade_level to float
+                'article_link': str(row['article_link'])  # Convert article_link to string
             })
 
     results_df = pd.DataFrame(results)
     return results_df
-
-def determine_relative_grade_level(avg_grade_level):
-    """just wrote this out in case we want to use somehting like this"""
-    if avg_grade_level <= 5:
-        return 'Elementary'
-    elif avg_grade_level <= 8:
-        return 'Middle School'
-    else:
-        return 'High School'
