@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from pathlib import Path
-# import boto3
+import boto3
 from io import StringIO
 import json
 from sqlalchemy import Table, MetaData
