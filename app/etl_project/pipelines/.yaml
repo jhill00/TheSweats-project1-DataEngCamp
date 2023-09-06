@@ -1,0 +1,6 @@
+name: news_etl
+config:
+  vocab_words_path: '.etl_project\data\vocabulary_by_gradelv.csv'
+  newspaper_busnesses: '.\etl_project\data\list_of_newspaper_businesses.csv'
+schedule:
+  run_seconds: 1800

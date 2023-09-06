@@ -1,0 +1,3 @@
+name: news_etl
+config: 
+log_folder: etl_project\logs
