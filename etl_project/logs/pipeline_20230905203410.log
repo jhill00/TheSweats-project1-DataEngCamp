@@ -1,0 +1,4 @@
+2023-09-05 20:34:10.981 | INFO     | __main__:<module>:34 - Loading for news table
+2023-09-05 20:34:10.997 | INFO     | __main__:<module>:42 - Extracting news data
+2023-09-05 20:34:10.997 | ERROR    | __main__:<module>:88 - Pipeline failed: Please enter a valid API key. A valid key cannot be None.
+2023-09-05 20:34:10.997 | ERROR    | __main__:<module>:89 - logs are saved in etl_project/logs
