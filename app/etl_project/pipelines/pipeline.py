@@ -41,7 +41,7 @@ if __name__ == "__main__":
     Column('language', String)
     )
 
-    loaded(df=df_renamed_news_data, postgresql_client=postgresql_client, table=news_raw_table, metadata=metadata, load_method="overwrite")
+    loaded(df=df_renamed_news_data, postgresql_client=postgresql_client, table=news_raw_table, metadata=metadata, load_method="upsert")
     
     # Processing the newspaper df using vocabulary by grade level, then loading it 
 
@@ -57,4 +57,4 @@ if __name__ == "__main__":
     Column('grade_level', Integer),
     )
 
-    loaded(df=processed_articles_table, postgresql_client=postgresql_client, table=news_raw_table, metadata=metadata, load_method="overwrite")
+    loaded(df=processed_articles_table, postgresql_client=postgresql_client, table=news_raw_table, metadata=metadata, load_method="upsert")
