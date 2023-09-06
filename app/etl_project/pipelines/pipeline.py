@@ -41,7 +41,7 @@ if __name__ == "__main__":
     Column('language', String)
     )
 
-    loaded(df=df_renamed_news_data, postgresql_client=postgresql_client, table=news_raw_table, metadata=metadata, load_method="overwrite")
+    loaded(df=df_renamed_news_data, postgresql_client=postgresql_client, table=news_raw_table, metadata=metadata, load_method="upsert")
     
     # Processing the newspaper df using vocabulary by grade level, then loading it 
     df_vocabulary_by_gradelv = download_from_s3(ACCESS_KEY=ACCESS_KEY, SECRET_KEY=SECRET_KEY, s3_bucket="thesweats-project1", key="vocabulary_by_gradelv.csv")
