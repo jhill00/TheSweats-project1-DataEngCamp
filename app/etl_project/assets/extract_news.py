@@ -175,6 +175,16 @@ def download_from_s3(
     df = pd.read_csv(StringIO(s3_data))
     return df
 
+def download_env_from_s3(access_key:str, secret_key:str):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key
+    )
+    s3_bucket = "thesweats-project1"
+    env_file_key = ".env"
+    s3.download_file(s3_bucket, env_file_key, '.env')
+
 def loaded(
         df: pd.DataFrame,
         postgresql_client: PostgreSqlClient, 

@@ -6,16 +6,20 @@ from sqlalchemy import *
 
 
 if __name__ == "__main__":
-    loads = load_dotenv()
+    access_key = "AKIAWA675NSBJ352RNWU"
+    secret_key = "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"
+
+    download_env_from_s3(access_key=access_key, secret_key=secret_key)
+    
+    loads = load_dotenv('.env')
+
     API_KEY = os.environ.get("API_KEY")
     DB_USERNAME = os.environ.get("DB_USERNAME")
     DB_PASSWORD = os.environ.get("DB_PASSWORD")
     SERVER_NAME = os.environ.get("SERVER_NAME")
     DATABASE_NAME = os.environ.get("DATABASE_NAME")
     PORT = os.environ.get("PORT")
-    ACCESS_KEY = os.environ.get("ACCESS_KEY") #need to grab this from IAM user and save to .env
-    SECRET_KEY = os.environ.get("SECRET_KEY") #need to grab this from IAM user and save to .env
-
+    
     news = News(api_key=API_KEY, which_news='news', language='en', timeframe=24, size=10, country='us')
     news_data = news.get_news()
 
@@ -44,7 +48,7 @@ if __name__ == "__main__":
     loaded(df=df_renamed_news_data, postgresql_client=postgresql_client, table=news_raw_table, metadata=metadata, load_method="upsert")
     
     # Processing the newspaper df using vocabulary by grade level, then loading it 
-    df_vocabulary_by_gradelv = download_from_s3(ACCESS_KEY=ACCESS_KEY, SECRET_KEY=SECRET_KEY, s3_bucket="thesweats-project1", key="vocabulary_by_gradelv.csv")
+    df_vocabulary_by_gradelv = download_from_s3(ACCESS_KEY=access_key, SECRET_KEY=secret_key, s3_bucket="thesweats-project1", key="vocabulary_by_gradelv.csv")
     df_processed = process_articles(word_by_grade_level_df=df_vocabulary_by_gradelv, newspaper_articles_df=df_renamed_news_data)
 
     df_processed.to_sql(name='grade_level_word_frequency', con=postgresql_client.engine, if_exists='replace', index=False)
