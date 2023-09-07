@@ -11,7 +11,7 @@ from etl_project.connectors.postgresql import PostgreSqlClient
 
 class News:
 
-    def __init__(self, api_key:str, which_news:str = 'news', language:str = 'en', timeframe:int = 24, size:int = 10, 
+    def __init__(self, api_key:str, which_news:str = 'news', language:str = 'en', timeframe:int = 8, size:int = 10, 
         country:str='us', domainurl:str=['ibtimes.com','latimes.com','investorplace.com','popsci.com','thehill.com'],
         prioritydomain:str=None, q:str=None, qInTitle:str=None, qInMeta:str=None, category:str=None, domain:str=None,
          excludedomain:str=None, timezone:str=None, full_content:bool=None, image:bool=None, video:bool=None):

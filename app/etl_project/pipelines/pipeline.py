@@ -16,7 +16,7 @@ if __name__ == "__main__":
     ACCESS_KEY = os.environ.get("ACCESS_KEY") #need to grab this from IAM user and save to .env
     SECRET_KEY = os.environ.get("SECRET_KEY") #need to grab this from IAM user and save to .env
 
-    news = News(api_key=API_KEY, which_news='news', language='en', timeframe=24, size=10, country='us')
+    news = News(api_key=API_KEY, which_news='news', language='en', timeframe=8, size=10, country='us')
     news_data = news.get_news()
 
     postgresql_client = PostgreSqlClient(server_name=SERVER_NAME, database_name=DATABASE_NAME, username=DB_USERNAME, password=DB_PASSWORD, port=PORT)
