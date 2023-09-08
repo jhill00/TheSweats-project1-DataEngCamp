@@ -158,23 +158,22 @@ def rename_and_select_columns_news(
     return df_news_selected
 
 def download_from_s3(
-        ACCESS_KEY: str,
-        SECRET_KEY: str,
         s3_bucket: str,
         key: str
     ) -> pd.DataFrame:
-    """Downloads a csv from S3 bucket"""
-    s3 = boto3.client(
-        's3',
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_KEY,
-        region_name='us-east-1'
-    )
-    s3_object = s3.get_object(Bucket=s3_bucket, Key=key)
-    s3_data = s3_object['Body'].read().decode('utf-8')
-    df = pd.read_csv(StringIO(s3_data))
-    return df
-
+    """Downloads a CSV from an S3 bucket"""
+    # Initialize the S3 client without specifying access keys
+    s3 = boto3.client('s3', region_name='us-east-1')
+    try:
+        s3_object = s3.get_object(Bucket=s3_bucket, Key=key)
+        s3_data = s3_object['Body'].read().decode('utf-8')
+        df = pd.read_csv(StringIO(s3_data))
+        return df
+    except Exception as e:
+        # Handle exceptions, such as file not found or access denied
+        print(f"Error downloading from S3: {str(e)}")
+        return None
+    
 def loaded(
         df: pd.DataFrame,
         postgresql_client: PostgreSqlClient, 
